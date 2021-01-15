@@ -1,0 +1,28 @@
+[ PPT 파일 작성 내용 ]
+
+1. 프로젝트 개요
+
+   주제를 선택한 배경
+   애플리케이션에 대한 간단한 설명
+   
+2. 개발 환경 및 적용 기술
+
+   Miniconda 4.9.2
+   Visual Studio Code 1.52.1
+   Python 3.7.9
+   Django 3.1.4
+   
+   MySQL 8.0.22
+   MySQL Workbench 8.0.22
+   
+   Chrome  87.0.4280.141
+   jQuery 3.x
+   
+   추가 사용 도구 또는 
+   
+3. 기능별 화면 캡처
+
+   간단한 설명과 화면 캡처
+   
+   
+   
