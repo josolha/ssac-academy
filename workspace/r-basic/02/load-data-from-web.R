@@ -50,7 +50,7 @@ json <- readLines(url2, encoding = "UTF-8", warn = F) # 지정된 url로 요청�
 json
 class(json)
 
-data <- fromJSON(json) # json string -> R object
+data <- fromJSON(json) # json string -> R object ( 여기서는 list로 변경 )
 class(data)
 data
 
