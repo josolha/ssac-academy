@@ -57,3 +57,17 @@ data
 df <- data.frame(data$GeoInfoAnnualPrecipitationWGS$row)
 df
 View(df)
+
+as.numeric(df$MEAN_PRE)
+
+bplot <- barplot(as.numeric(df$MEAN_PRE),
+                 main = 'Annual Precipitation',
+                 col = rainbow(10),
+                 ylim = c(0, 2000),
+                 names.arg = df$NAM,
+                 cex.name = 0.6)
+text(x = bplot, y = df$MEAN_PRE, 
+     labels = paste(df$MEAN_PRE, 'mm'),
+     col = 'black', cex = 0.6, srt = 90)
+
+        

@@ -46,3 +46,28 @@ mapply(sum, vec1, vec2, vec3)
 library(stringr)
 fruits <- c("apple", "Apple", "banana", "pineapple")
 str_detect(fruits, "A")
+str_detect(fruits, "^a") # a로 시작하는
+str_detect(fruits, "e$") # e로 끝나는
+str_detect(fruits, "^[aA]") # a또는 A로 시작하는는
+
+str_c("Fruits : ", fruits)
+paste("Fruits : ", fruits)
+
+str_length('hello')
+str_length(c('hello'))
+str_length(fruits)
+
+char <- c('apple', 'Apple', 'APPLE', 'banana', 'grape')
+grep('apple', char)
+
+#
+library(sqldf)
+
+sqldf('select * from Fruits where Fruit = \'Apples\' ')
+sqldf('select * from Fruits limit 3')
+sqldf('select * from Fruits order by Year')
+sqldf('select Fruit, avg(Sales) from Fruits group by Fruit')
+
+
+
+
