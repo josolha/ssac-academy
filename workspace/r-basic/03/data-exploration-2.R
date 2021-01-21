@@ -254,4 +254,49 @@ this_mpg %>%
   group_by(drv) %>% 
   summarise(hwy_mean = mean(hwy))
 
+# 
+outlier <- data.frame(sex = c(1, 2, 1, 3, 2, 1),
+                      score = c(5, 4, 3, 4, 2, 6))
+outlier
+table(outlier$sex)
+table(outlier$score)
 
+outlier$sex <- ifelse(outlier$sex %in% c(1, 2), outlier$sex, NA)
+outlier
+outlier$score <- ifelse(outlier$score %in% 1:5, outlier$score, NA)
+outlier
+
+outlier %>%
+  filter(!is.na(sex) & !is.na(score)) %>%
+  group_by(sex) %>%
+  summarise(mean_score = mean(score))
+
+#
+boxplot(mpg$hwy, horizontal = TRUE)
+
+hwy_range <- boxplot(mpg$hwy)$stats # 통계량 반환환
+hwy_range
+
+mpg$hwy <- ifelse(mpg$hwy < hwy_range[1, 1] | mpg$hwy > hwy_range[5, 1],
+                  NA, mpg$hwy)
+table(is.na(mpg$hwy))
+
+mpg %>%
+  group_by(drv) %>%
+  summarise(mean_hwy = mean(hwy, na.rm = TRUE))
+
+#
+mpg <- as.data.frame(ggplot2::mpg)
+mpg[c(10, 14, 58, 93), "drv"] <- "k";
+mpg[c(29, 43, 129, 203), "cty"] <- c(3, 4, 39, 42)
+
+table(mpg$drv)
+
+mpg$drv <- ifelse(mpg$drv %in% c('4', 'f', 'r'), mpg$drv, NA)
+table(is.na(mpg$drv))
+
+table(mpg$cty)
+boxplot(mpg$cty)$stats
+
+mpg$cty <- ifelse( (mpg$cty < 9) | (mpg$cty > 26), NA, mpg$cty ) 
+table(is.na(mpg$cty))
