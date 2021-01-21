@@ -131,3 +131,68 @@ group_b
 group_all <- bind_rows(group_a, group_b)
 group_all
 
+
+#####################################################################
+## 연습
+
+mpg %>%
+  mutate(displ_level = ifelse(displ <= 4, 'low', 'high')) %>% 
+  group_by(displ_level) %>% 
+  summarise(hwy_mean = mean(hwy))
+
+mpg %>% 
+  filter(manufacturer %in% c('audi', 'toyota')) %>% 
+  group_by(manufacturer) %>% 
+  summarise(cty_mean = mean(cty))
+
+mpg %>% 
+  filter(manufacturer %in% c('chevrolet', 'ford', 'honda')) %>% 
+  summarise(hwy_mean = mean(hwy))
+
+mpg %>% 
+  select(class, cty, hwy) %>% 
+  head
+
+mpg %>%
+  filter(class %in% c('suv', 'compact')) %>% 
+  select(class, cty, hwy) %>% 
+  group_by(class) %>% 
+  summarise(cty_mean = mean(cty))
+
+mpg %>%
+  filter(manufacturer == 'audi') %>% 
+  arrange(desc(hwy)) %>% 
+  head(5)
+
+mpg %>% 
+  mutate(total = cty + hwy,
+         mean = total / 2) %>% 
+  arrange(desc(mean)) %>% 
+  head(3)
+
+mpg %>% 
+  group_by(class) %>% 
+  summarise(cty_mean = mean(cty)) %>% 
+  arrange(desc(cty_mean))
+
+mpg %>% 
+  group_by(class) %>% 
+  summarise(hwy_mean = mean(hwy)) %>% 
+  arrange(desc(hwy_mean)) %>% 
+  head(5)
+
+mpg %>% 
+  filter(class == 'compact') %>% 
+  group_by(manufacturer) %>% 
+  summarise(n = n()) %>% 
+  arrange(desc(n))
+
+fuel <- data.frame(fl = c('c', 'd', 'e', 'p', 'r'), 
+                   price_fl = c(2.35, 2.38, 2.11, 2.76, 2.22),
+                   stringsAsFactors = FALSE)
+fuel
+
+mpg %>% 
+  inner_join(fuel, by = 'fl') %>% 
+  select(model, fl, price_fl) %>% 
+  head
