@@ -1,0 +1,143 @@
+---
+title: "Data Exploration"
+output: html_notebook
+---
+
+
+```{r}
+## 데이터 가져오기
+raw_welfare <- read.csv('../data-files/selected_welfare.csv')
+```
+
+
+```{r}
+## 데이터 복사
+welfare <- raw_welfare
+```
+
+
+```{r}
+ # 데이터 구조 확인
+str(welfare)
+head(welfare)
+```
+
+
+## 성별에 따른 월급 차이
+
+```{r}
+# 성별 데이터 확인 ( 1 : 남, 2 : 여, 9 : 모름/무응답 )
+table(welfare$sex)
+```
+```{r}
+# 성별 데이터를 수치 데이터 -> 문자열 데이터로 변경
+welfare$sex <- ifelse(welfare$sex == 1, 'male', 'female')
+table(welfare$sex)
+```
+
+```{r}
+qplot(welfare$sex)
+```
+
+
+```{r}
+# 급여 데이터 확인 ( 범위 : 1 ~ 9998, 모름/무응답 : 9999)
+summary(welfare$income)
+```
+
+```{r}
+# income의 0, 9999 -> NA 처리
+welfare$income <- ifelse(welfare$income %in% c(0, 9999), NA, welfare$income)
+# NA 분포 확인
+table( is.na(welfare$income) )
+```
+
+
+```{r}
+# NA를 제거한 성별 급여 평균
+income_by_gender <- welfare %>% 
+  filter(!is.na(income)) %>% 
+  group_by(sex) %>% 
+  summarise(income_mean = mean(income))
+
+income_by_gender
+```
+
+```{r}
+ggplot(income_by_gender, aes(x = sex, y = income_mean)) + geom_bar(stat='identity')
+```
+
+## 나이와 급여 사이의 관계
+
+```{r}
+# 데이터 구조 다시보기
+str(welfare)
+
+# birth 데이터로 age 데이터로 사용
+# brith 분포 확인 ( 범위 : 1900 ~ 2014, 9999 : 모름 / 무응답 )
+summary(welfare$birth)
+
+# NA 여부 확인
+table( is.na(welfare$birth) )
+```
+
+```{r}
+# 출생년도를 사용해서 2015년 기준 나이 계산해서 새로운 컬럼에 저장
+welfare <- welfare %>% 
+  mutate(age = 2015 - birth + 1)
+
+# 나이 데이터 분포 확인
+summary(welfare$age)
+```
+
+```{r}
+qplot(welfare$age)
+```
+
+```{r}
+# NA인 inome을 제외하고 연령별로 급여 평균 계산
+income_by_age <- welfare %>% 
+  filter(!is.na(income)) %>% 
+  group_by(age) %>%
+  summarise(income_mean = mean(income))
+
+income_by_age
+```
+
+
+```{r}
+ggplot(income_by_age, aes(x = age, y = income_mean)) + geom_line()
+```
+
+```{r}
+# 연령대 변수 만들기 ( ~ 30 / 30 ~ 60 / 60 ~ )
+welfare <- welfare %>% 
+  mutate(age2 = ifelse(age < 30, 
+                       'young', 
+                       ifelse(age < 60, 'middle', 'old')))
+table(welfare$age2)
+qplot(welfare$age2)
+```
+```{r}
+
+```
+```{r}
+
+```
+```{r}
+
+```
+```{r}
+
+```
+```{r}
+
+```
+
+```{r}
+```
+
+
+```{r}
+```
+
