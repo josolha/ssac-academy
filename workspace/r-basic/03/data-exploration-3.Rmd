@@ -119,18 +119,60 @@ table(welfare$age2)
 qplot(welfare$age2)
 ```
 ```{r}
+# 연령대별로 급여 평균
+income_by_age2 <- welfare %>% 
+  filter(!is.na(income)) %>% 
+  group_by(age2) %>% 
+  summarise(income_mean = mean(income))
 
+income_by_age2
+ggplot(income_by_age2, aes(x = age2, y = income_mean)) + geom_bar(stat='identity')
 ```
 ```{r}
+# 성별, 연령대별 급여 비교
 
+income_by_age2_and_gender <- welfare %>% 
+  filter(!is.na(income)) %>% 
+  group_by(age2, sex) %>% 
+  summarise(income_mean = mean(income))
+
+income_by_age2_and_gender
+ggplot(income_by_age2_and_gender, aes(x = age2, y = income_mean, fill = sex)) + geom_bar(stat='identity', position = 'dodge')
 ```
 ```{r}
+# 연령별, 성별 급여 분석
+income_by_age_and_gender <- welfare %>% 
+  filter(!is.na(income)) %>% 
+  group_by(age, sex) %>% 
+  summarise(income_mean = mean(income),
+            n = n())
 
+income_by_age_and_gender
+
+ggplot(income_by_age_and_gender, aes(x = age, y = income_mean, col = sex)) + geom_line()
 ```
 ```{r}
+# 종교와 결혼상태(이혼) 관계 분석
+# 결혼상태 데이터 탐색 ( 0 : 18세미만    1 : 유배우    2 : 사별    3 : 이혼    4 : 별거   5 : 미혼    6 : 기타)
+class(welfare$marriage)
+table(welfare$marriage)
 
+# 이혼여부 컬럼 추가 ('marriage', 'divorce', NA)
+welfare <- welfare %>% 
+  mutate(marriage2 = ifelse(marriage == 1, 
+                            'marriage', 
+                            ifelse(marriage == 3, 'divorce', NA)))
+
+table(is.na(welfare$marriage2))
+qplot(welfare$marriage2)
 ```
 ```{r}
+# 종교 데이터 탐색 ( 1: 있음, 2 : 없음, 9: 모름/무응답 )
+table(welfare$religion)
+
+# 데이터를 숫자 -> 문자열
+welfare$religion <- ifelse(welfare$religion == 1, "yes", "no")
+table(welfare$religion)
 
 ```
 
