@@ -1,0 +1,106 @@
+---
+title: "LAB THREE"
+output: html_notebook
+---
+
+### 라이브러리 준비
+
+```{r}
+library(ggplot2)
+library(dplyr)
+```
+
+### 데이터 준비
+
+```{r}
+ab_test_imp <- read.csv('../data-files/lab3-ab_test_imp.csv')     # 이벤트 화면 표시 정보
+ab_test_goal <- read.csv('../data-files/lab3-ab_test_goal.csv')   # 이벤트 화면을 클릭해서 구매 화면 표시 정보
+```
+
+### 데이터 확인
+
+```{r}
+str(ab_test_imp)
+str(ab_test_goal)
+```
+
+### 데이터 병합
+
+```{r}
+ab_test_imp <- ab_test_imp %>% 
+  left_join(ab_test_goal, by = c('transaction_id'), suffix = c('', '.g'))
+
+ab_test_imp
+```
+
+### 이벤트를 통해 구매 화면으로 이동했는지 여부를 저장하는 컬럼 추가
+
+```{r}
+ab_test_imp <- ab_test_imp %>% 
+  mutate(is_goal = ifelse(is.na(user_id.g), 0, 1))
+
+ab_test_imp
+```
+
+### 테스트 종류벼 분포 확인
+
+```{r}
+table(ab_test_imp$test_case)
+table(ab_test_imp$is_goal)
+```
+
+
+### 클릭율을 저장하는 컬럼 추가
+
+```{r}
+ab_test_imp %>% 
+  group_by(test_case) %>% 
+  summarise(cvr = sum(is_goal) / length(user_id))
+```
+
+
+### 일자별 / 테스트종류별 클릭율 집계
+
+```{r}
+ab_test_imp_summary <- ab_test_imp %>% 
+  group_by(log_date, test_case) %>% 
+  summarise(imp = length(user_id),
+            cv = sum(is_goal),
+            cvr = cv / imp)
+
+ab_test_imp_summary
+```
+
+
+### 일자별 데이터 시각화
+
+```{r}
+ab_test_imp_summary$log_date <- as.Date(ab_test_imp_summary$log_date) # 자료형을 날짜형으로 변경
+
+ggplot(ab_test_imp_summary, aes(x = log_date, y = cvr, col = test_case, lty = test_case, shape = test_case)) +
+  geom_line(lwd = 1) +
+  geom_point(size = 3)
+```
+
+### 테스트 결과의 신뢰도 검정
+
+```{r}
+chisq.test(ab_test_imp$test_case, ab_test_imp$is_goal)
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
