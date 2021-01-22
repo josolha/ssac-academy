@@ -91,6 +91,12 @@ mau_payment <- mau_payment %>%
 mau_payment
 ```
 
+### 시각화
+
+```{r}
+ggplot(mau_payment, aes(x = log_month, y = total_payment, fill = user_type)) + 
+  geom_bar(stat = 'identity')
+```
 
 
 
