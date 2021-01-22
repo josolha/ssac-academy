@@ -1,0 +1,165 @@
+---
+title: "Lab One"
+output: html_notebook
+---
+
+
+### 라이브러리 준비
+
+```{r}
+library(ggplot2)
+library(dplyr)
+```
+
+### 데이터 준비
+
+```{r}
+dau <- read.csv('../data-files/lab1-dau.csv')
+dpu <- read.csv('../data-files/lab1-dpu.csv')
+install <- read.csv('../data-files/lab1-install.csv')
+```
+
+### 데이터 확인
+
+```{r}
+str(dau)
+str(dpu)
+str(install)
+```
+
+### 데이터 결합
+
+```{r}
+dau_install_payment <- dau %>% 
+  left_join(install, by = c('user_id', 'app_name')) %>% 
+  left_join(dpu, by =c('log_date', 'user_id', 'app_name'))
+
+str(dau_install_payment)
+head(dau_install_payment)
+```
+
+### payment NA -> 0
+
+```{r}
+dau_install_payment$payment <- ifelse(is.na(dau_install_payment$payment), 0, dau_install_payment$payment)
+
+#dau_install_payment <- dau_install_payment %>% 
+#  mutate(payment = ifelse(is.na(payment), 0, payment))
+
+dau_install_payment
+```
+
+### log_month, install_month 컬럼 추가 (일을 제거하고 월까지만 저장)
+
+```{r}
+dau_install_payment <- dau_install_payment %>% 
+  mutate(log_month = substr(log_date, 1, 7),
+         install_month = substr(install_date, 1, 7))
+
+dau_install_payment
+```
+
+### (사용자 / 가입월 / 접속월)별 payment 합계
+
+```{r}
+mau_payment <- dau_install_payment %>% 
+  group_by(log_month, user_id, install_month) %>% 
+  summarise(payment = sum(payment))
+
+mau_payment
+```
+
+
+### 신규 사용자와 기존 사용자 구분 컬럼 추가
+
+```{r}
+# mau_payment$use_type <- ifelse(mau_payment$install_month == mau_payment$log_month, 'install', 'existing')
+
+mau_payment <- mau_payment %>% 
+  mutate(user_type = ifelse(install_month == log_month, 'install', 'existing'))
+
+mau_payment
+```
+
+### 사용자구분별로 payment 합계
+
+```{r}
+mau_payment <- mau_payment %>% 
+  group_by(log_month, user_type) %>% 
+  summarise(total_payment = sum(payment))
+
+mau_payment
+```
+
+
+
+
+### 질문 답변
+
+```{r}
+xy <- data.frame(x = c(1, 2), y = c(3, 4))
+xz <- data.frame(x = c(1, 1), z = c(5, 6))
+# xy
+# xz
+inner_join(xy, xz, by = c('x'))
+left_join(xy, xz, by = c('x'))
+```
+```{r}
+# dau.install <- left_join(dau, install, by = c('user_id', 'app_name'))
+# str(dau.install)
+
+# left_join(dau.install, dpu, by =c('log_date', 'user_id', 'app_name'))
+tmp <- dpu %>% 
+  group_by(log_date, user_id, app_name) %>% 
+  summarise(n = n(), .groups = 'drop') # .groups = 'drop' : 기존 group_by를 모두 제거
+
+tmp
+
+nrow(tmp)
+
+tmp %>% summarise(total = sum(n))
+
+```
+
+
+```{r}
+139295 - 139112
+884 - 701
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
