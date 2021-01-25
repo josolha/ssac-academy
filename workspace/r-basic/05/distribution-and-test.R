@@ -121,6 +121,22 @@ library(gmodels)
 study <- read.csv("data-files/pass-cross.csv", header = T)
 study
 
+CrossTable(study$공부함, study$합격, chisq = T)
+
+### 카이제곱 검정 2
+
+library(MASS)
+str(survey)
+head(survey)
+?survey
+
+head(survey[,c("Sex", "Exer")])
+
+xtabs(~ Sex + Exer, data = survey)
+
+chisq.test(xtabs(~Sex + Exer, data = survey))
+
+
 
 
 
