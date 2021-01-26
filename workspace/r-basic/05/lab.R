@@ -1,13 +1,13 @@
 # [ 문제 1 ]
 # 
-# 미세먼지와 교통사고 사이의 상관관계 확인
+# 미세먼지와 교통사고 사이의 상관 관계 확인
 # 
 # 1. 데이터 읽기
 # - pm10.traffic.accident.csv 파일에서 데이터 읽기
 # - 데이터 확인
 # 
 # 
-# 2. 미세먼지와 교통사고 사이의 상관관계를 확인하고 검정 수행
+# 2. 미세먼지와 교통사고 사이의 상관 관계를 확인하고 검정 수행
 
 pt <- read.csv("data-files/pm10.traffic.accident.csv", header=T)
 pt
@@ -29,7 +29,7 @@ cor.test(pt$pm10, pt$ta)
 
 x <- c(315, 101, 108, 32)
 
-c(315, 101, 108, 32) / sum(x)
+x / sum(x)
 c(9, 3, 3, 1)/16
 
 chisq.test(x, p=c(9, 3, 3, 1)/16)
@@ -52,15 +52,20 @@ library(dplyr)
 
 sns.c <- read.csv("data-files/snsbyage.csv", header=T, stringsAsFactors=FALSE)
 str(sns.c)
+head(sns.c)
 
 sns.c <- sns.c %>% 
-  mutate(age.c = factor(age, levels=c(1, 2, 3), 
+  mutate(age.c = factor(age, 
+                        levels=c(1, 2, 3), 
                         labels=c("20대", "30대", "40대")),
-         service.c = factor(service, levels=c("F", "T", "K", "C", "E"), 
-                            ordered=TRUE))
+         service.c = factor(service, 
+                            levels=c("F", "T", "K", "C", "E")))
+
+sns.c
 
 c.tab <- table(sns.c$age.c, sns.c$service.c)
 c.tab
+
 chisq.test(c.tab) 
 
  
@@ -83,6 +88,7 @@ chisq.test(c.tab)
 UCBAdmissions
 ucba.tab <- apply(UCBAdmissions, c(1, 2), sum)
 ucba.tab
+
 round(prop.table(ucba.tab, margin=2) * 100, 1)
 
 chisq.test(ucba.tab)
@@ -109,6 +115,7 @@ names(data) <- c("time", "gender", "weight", "minutes")
 data
 female_weight <- data %>% filter(gender == 1) %>% select(weight)
 female_weight
+mean(female_weight$weight)
 
 t.test(female_weight, mu=2800, alternative="greater")
 
@@ -127,10 +134,13 @@ t.test(female_weight, mu=2800, alternative="greater")
 # 3. 새로 만든 컬럼의 값을 사용해서 가설 검정
 
 tmp <- read.table("data-files/restitution.txt", header=T)
-rel <- ifelse(tmp$rst < 0.4134 | tmp$rst > 0.4374, 1, 0)
+tmp
+rel <- ifelse(tmp$rst < 0.4131 | tmp$rst > 0.4373, 1, 0)
 rel
+sum(rel) / length(rel)
 
-prop.test(sum(rel), length(rel), p = 0.1, alternative = 'greater')
+
+prop.test(sum(rel), length(rel), p = 0.1, alternative = 'less')
 
 
 # [ 문제 7 ]
@@ -146,10 +156,11 @@ prop.test(sum(rel), length(rel), p = 0.1, alternative = 'greater')
 # 3. 남 / 연 신생아의 체중에 차이가 있는지 검정 수행
 
 data <- read.table("data-files/baby-age-by-gender.txt", header=T)
+data
 
 var.test(data$weight ~ data$gender)
 
-t.test(data$weight ~ data$gender, alternative="less", var.equal=TRUE)
+t.test(data$weight ~ data$gender, var.equal=TRUE)
 
  
 # [ 문제 8 ]
@@ -165,6 +176,6 @@ t.test(data$weight ~ data$gender, alternative="less", var.equal=TRUE)
 data2 <- read.csv("data-files/anorexia.csv", header=T)
 str( data2 )
 data2
-t.test(data2$Prior, data2$Post, paired=T, alternative="less")
+t.test(data2$Prior, data2$Post, paired=T)
 
 
